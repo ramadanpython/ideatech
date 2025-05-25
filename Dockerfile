@@ -2,16 +2,16 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Установим curl, gnupg и ca-certificates
+# Установим базовые утилиты
 RUN apt update && apt install -y curl gnupg ca-certificates
 
-# Добавим репозиторий SOGo
+# Добавим репозиторий SOGo (Ubuntu 24.04 → noble)
 RUN echo "deb https://packages.inverse.ca/SOGo/nightly/5/ubuntu/ noble main" > /etc/apt/sources.list.d/sogo.list
 
-# Добавим GPG-ключ
-RUN curl -s https://packages.inverse.ca/SOGo/GPGKEY | gpg --dearmor -o /etc/apt/trusted.gpg.d/sogo.gpg
+# Импорт GPG-ключа
+RUN curl -s https://packages.inverse.ca/SOGo/GPGKEY | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sogo.gpg > /dev/null
 
-# Установим нужные пакеты
+# Установим пакеты
 RUN apt update && apt install -y \
     sogo \
     mariadb-client \
