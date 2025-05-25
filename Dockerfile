@@ -1,17 +1,14 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Установим базовые утилиты
-RUN apt update && apt install -y curl gnupg ca-certificates
+# Включаем universe
+RUN sed -i 's/^# deb/deb/g' /etc/apt/sources.list && \
+    apt update && apt install -y \
+    software-properties-common && \
+    add-apt-repository universe
 
-# Добавим репозиторий SOGo (Ubuntu 24.04 → noble)
-RUN echo "deb https://packages.inverse.ca/SOGo/nightly/5/ubuntu/ noble main" > /etc/apt/sources.list.d/sogo.list
-
-# Импорт GPG-ключа
-RUN curl -s https://packages.inverse.ca/SOGo/GPGKEY | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sogo.gpg > /dev/null
-
-# Установим пакеты
+# Устанавливаем пакеты
 RUN apt update && apt install -y \
     sogo \
     mariadb-client \
